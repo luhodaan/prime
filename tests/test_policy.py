@@ -5,7 +5,8 @@ from policy import (
     normalize_key,
     parse_data,
     main,
-    InvalidPolicyError
+    InvalidPolicyError,
+    parse_policy
 )
 from dataclasses import dataclass,fields
 
@@ -23,3 +24,8 @@ def test_invalid_premium_exception():
     keys = {field.name for field in fields(Policy)}
     with pytest.raises(InvalidPolicyError):
         normalize_key(raw_data_el,"premium")
+
+def test_parse_policy():
+    raw_data_el = RAW_POLICIES[3]
+    with pytest.raises(InvalidPolicyError):
+        parse_policy(raw_data_el)

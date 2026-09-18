@@ -69,13 +69,21 @@ def normalize_key(data_el: dict, key:str) -> any:
                 return float(value)
             except ValueError:
                 raise InvalidPolicyError(f"Tried to parse {value} into float without success")
-                return None
                   
         case "status":
             if isinstance(value,str):
                 return value
 
     return None
+
+def parse_policy(policy: dict) -> Policy:
+        cleaned_dict = {}
+        for key in policy.keys():
+            new_value = normalize_key(policy,key)
+            cleaned_dict[key] = new_value
+        return Policy(**cleaned_dict)
+
+            
 
 def parse_data(data: list[dict],keys:list[str]) -> list[Policy]:
     cleaned_data = filter_input_by_keys(data, set(keys))
