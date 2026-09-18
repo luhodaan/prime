@@ -13,6 +13,8 @@ from dataclasses import dataclass,fields
 from data import RAW_POLICIES
 import pytest
 
+from aggregators import total_premium_by_type
+
 def test_invalid_premium():
     raw_data_el = RAW_POLICIES[3]
     keys = {field.name for field in fields(Policy)}
@@ -25,7 +27,9 @@ def test_invalid_premium_exception():
     with pytest.raises(InvalidPolicyError):
         normalize_key(raw_data_el,"premium")
 
-def test_parse_policy():
-    raw_data_el = RAW_POLICIES[3]
-    with pytest.raises(InvalidPolicyError):
-        parse_policy(raw_data_el)
+def test_total_premium():
+    raw_data = RAW_POLICIES[:3]
+    keys = {field.name for field in fields(Policy)}
+    policies = parse_data(raw_data,keys)
+    total = total_premium_by_type(policies)
+    assert 910.50 == total
