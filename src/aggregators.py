@@ -1,4 +1,4 @@
-from policy import Policy
+from src.main import Policy
 
 def total_premium_by_type(data: list[Policy]) -> float:
         total_premium = 0

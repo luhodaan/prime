@@ -1,22 +1,10 @@
-from dataclasses import dataclass, fields
-from enum import Enum
-from data import RAW_POLICIES
+from dataclasses import fields
+from src.data import RAW_POLICIES
 
-@dataclass
-class Policy:
-    id: str
-    customer: str
-    type: str
-    premium: float
-    status: str
+from src.models import Policy
+from src.models import Type
 
-class Type(Enum):
-    AUTO = "auto"
-    HOME = "home"
-    LIFE = "life"
-
-class InvalidPolicyError(Exception):
-    pass
+from src.errors import InvalidPolicyError, InvalidTypeError
 
 def filter_input_by_keys(data: list[dict], keys:set[str]) -> list[dict]:
     cleaned_out = []
@@ -61,7 +49,7 @@ def normalize_key(data_el: dict, key:str) -> any:
             if isinstance(value,str) and value.lower() in [item.value for item in Type]:
                 return value.lower()
             else:
-                print(f"type error for {value}")
+                raise InvalidTypeError(f"Type {value} not present in premium types allowed")
                 
         case "premium":
             try:
@@ -73,15 +61,22 @@ def normalize_key(data_el: dict, key:str) -> any:
         case "status":
             if isinstance(value,str):
                 return value
+            
+        case "country":
+            return value
 
     return None
 
-def parse_policy(policy: dict) -> Policy:
+def parse_policy(policy: dict) -> Policy | None:
         cleaned_dict = {}
-        for key in policy.keys():
-            new_value = normalize_key(policy,key)
-            cleaned_dict[key] = new_value
-        return Policy(**cleaned_dict)
+        try:
+            for key in policy.keys():
+                new_value = normalize_key(policy,key)
+                cleaned_dict[key] = new_value
+                return Policy(**cleaned_dict)
+        except (InvalidTypeError, InvalidPolicyError):
+                return None            
+        
 
             
 
