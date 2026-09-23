@@ -1,0 +1,5 @@
+
+1. model version ha (nome, versione, metriche)
+2. per passare un modello in produzione deve avere un miglioramento minimo richiesto
+3. se non esiste modello in produzione, il candidato viene sempre promosso
+4. se candidato e modello in produzione non hanno la metrica, restituisci errore
